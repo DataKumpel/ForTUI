@@ -2,7 +2,7 @@ MODULE fortui
     IMPLICIT NONE
     !===== VISIBILITY =============================================================================!
     PRIVATE
-    PUBLIC :: tui_write_text, clear_screen
+    PUBLIC :: tui_write_text, tui_draw_rect, clear_screen
     !===== VISIBILITY =============================================================================!
 
 
@@ -35,6 +35,34 @@ CONTAINS
         CALL color_background(cb)
         WRITE(*, '(A)', advance="no") text
         CALL clear_all_colors_and_attributes()
+    END SUBROUTINE
+
+
+    SUBROUTINE tui_draw_rect(xul, yul, xlr, ylr, symbol, cf, cb)
+        !===== PARAMETERS =========================================================================!
+        INTEGER, INTENT(IN)   :: xul !---> x upper left
+        INTEGER, INTENT(IN)   :: yul !---> y upper left
+        INTEGER, INTENT(IN)   :: xlr !---> x lower right
+        INTEGER, INTENT(IN)   :: ylr !---> y lower right
+        CHARACTER, INTENT(IN) :: symbol
+        INTEGER, INTENT(IN)   :: cf  !---> Color for the Foreground
+        INTEGER, INTENT(IN)   :: cb  !---> Color for the Background
+        !----- INTERNALS --------------------------------------------------------------------------!
+        INTEGER :: x
+        INTEGER :: y
+        !===== PARAMETERS =========================================================================!
+
+        DO x = xul, xlr
+            DO y = yul, ylr
+                CALL move_to(y, x)
+                IF (x == xul .OR. x == xlr .OR. y == yul .OR. y == ylr) THEN
+                    CALL color_foreground(cf)
+                    CALL color_background(cb)
+                    WRITE(*, '(A)', advance="no") symbol
+                    CALL clear_all_colors_and_attributes()
+                ENDIF
+            ENDDO
+        ENDDO
     END SUBROUTINE
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
