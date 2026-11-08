@@ -2,7 +2,7 @@ MODULE fortui
     IMPLICIT NONE
     !===== VISIBILITY =============================================================================!
     PRIVATE
-    PUBLIC :: tui_write_text, tui_draw_rect, clear_screen
+    PUBLIC :: tui_write_text, tui_draw_rect, tui_init, tui_close
     !===== VISIBILITY =============================================================================!
 
 
@@ -20,6 +20,23 @@ MODULE fortui
     !===== MODULE PARAMETERS ======================================================================!
 
 CONTAINS
+
+    SUBROUTINE tui_init()
+        !---> Enter raw mode:
+        CALL EXECUTE_COMMAND_LINE("stty raw -echo < /dev/tty")
+        CALL alt_screen(.TRUE.)
+        CALL show_cursor(.FALSE.)
+        CALL clear_screen()
+    END SUBROUTINE
+
+
+    SUBROUTINE tui_close()
+        CALL alt_screen(.FALSE.)
+        CALL show_cursor(.TRUE.)
+        !---> Exit raw mode:
+        CALL EXECUTE_COMMAND_LINE("stty sane < /dev/tty")
+    END SUBROUTINE
+
 
     SUBROUTINE tui_write_text(text, x, y, cf, cb)
         !===== PARAMETERS =========================================================================!
